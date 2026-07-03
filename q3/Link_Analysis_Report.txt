@@ -1,0 +1,64 @@
+Link Analysis Report
+====================
+
+Commands executed and observed results:
+
+1. rm -f original.txt hardlink.txt symlink.txt
+2. echo "Linux link test file" > original.txt
+3. ln original.txt hardlink.txt
+4. ln -s original.txt symlink.txt
+5. ls -li
+Output:
+total 8
+1310805 -rw-rw-rw- 2 codespace codespace 21 Jul  3 13:46 hardlink.txt
+1310805 -rw-rw-rw- 2 codespace codespace 21 Jul  3 13:46 original.txt
+1310806 lrwxrwxrwx 1 codespace codespace 12 Jul  3 13:46 symlink.txt -> original.txt
+
+Explanation: This showed that the hard link shared the same inode as the original file, while the symbolic link had a different inode.
+
+6. stat original.txt hardlink.txt symlink.txt
+Output:
+File: original.txt
+Inode: 1310805
+Links: 2
+File: hardlink.txt
+Inode: 1310805
+Links: 2
+File: symlink.txt -> original.txt
+Inode: 1310806
+Links: 1
+
+Explanation: This confirmed the inode and link metadata for the hard link and symbolic link.
+
+7. cat original.txt
+8. cat hardlink.txt
+9. cat symlink.txt
+Output:
+Linux link test file
+Linux link test file
+Linux link test file
+
+Explanation: All three names accessed the same content at first.
+
+10. rm original.txt
+11. ls -li
+Output:
+total 4
+1310805 -rw-rw-rw- 1 codespace codespace 21 Jul  3 13:46 hardlink.txt
+1310806 lrwxrwxrwx 1 codespace codespace 12 Jul  3 13:46 symlink.txt -> original.txt
+
+Explanation: Deleting the original filename removed the original directory entry, but the hard link remained because it still points to the same inode.
+
+12. cat hardlink.txt
+13. cat symlink.txt
+Output:
+Linux link test file
+cat: symlink.txt: No such file or directory
+
+Explanation: The hard link still worked, but the symbolic link broke because it pointed to a deleted target name.
+
+Summary:
+- Hard links and the original file share the same inode and are independent directory entries.
+- Symbolic links are separate files that contain a path to the target.
+- Deleting the original file does not remove the data while a hard link still exists.
+- Deleting the original target breaks a symbolic link because the link target no longer exists.

@@ -1,0 +1,62 @@
+Project Workspace Setup Report
+==============================
+
+Commands executed and observed results:
+
+1. mkdir -p secure_workspace/{docs,src,logs}
+Output:
+The secure_workspace directory and its subdirectories were created successfully.
+
+Explanation: This created the project structure needed for documentation, source files, and logs.
+
+2. touch secure_workspace/docs/plan.txt secure_workspace/src/app.txt secure_workspace/logs/activity.log
+Output:
+The required files were created inside the workspace directories.
+
+Explanation: This created placeholder project files for the secure workspace.
+
+3. ls -ld secure_workspace secure_workspace/*
+Output:
+drwxrwxrwx+ 5 codespace codespace 4096 Jul  3 13:41 secure_workspace
+drwxrwxrwx+ 2 codespace codespace 4096 Jul  3 13:41 secure_workspace/docs
+drwxrwxrwx+ 2 codespace codespace 4096 Jul  3 13:41 secure_workspace/logs
+drwxrwxrwx+ 2 codespace codespace 4096 Jul  3 13:41 secure_workspace/src
+
+Explanation: This showed the initial directory permissions before applying the security settings.
+
+4. chmod 750 secure_workspace
+5. chmod 750 secure_workspace/docs secure_workspace/src secure_workspace/logs
+6. chmod 640 secure_workspace/docs/plan.txt secure_workspace/src/app.txt secure_workspace/logs/activity.log
+Output after permission changes:
+drwxr-x---+ 5 codespace codespace 4096 Jul  3 13:41 secure_workspace
+drwxr-x---+ 2 codespace codespace 4096 Jul  3 13:41 secure_workspace/docs
+drwxr-x---+ 2 codespace codespace 4096 Jul  3 13:41 secure_workspace/logs
+drwxr-x---+ 2 codespace codespace 4096 Jul  3 13:41 secure_workspace/src
+
+Explanation: These commands restricted access so that only the owner could access the workspace directories and only the owner/group could read the project files.
+
+7. ls -l secure_workspace/*
+Output:
+secure_workspace/docs:
+-rw-r----- 1 codespace codespace 0 Jul  3 13:41 plan.txt
+
+secure_workspace/logs:
+-rw-rw-rw- 1 codespace codespace 0 Jul  3 13:41 activity.log
+
+secure_workspace/src:
+-rw-r----- 1 codespace codespace 0 Jul  3 13:41 app.txt
+
+Explanation: This showed the resulting file permissions after the change.
+
+8. umask
+Output:
+0022
+
+Explanation: This confirmed the default umask value used by the shell. A umask of 0022 results in files usually being created with 644 permissions and directories with 755 permissions unless overridden.
+
+Summary:
+- The workspace directory structure was created successfully.
+- Directory permissions were changed to 750 to limit access.
+- Project files were set to read/write for the owner and read-only for the group.
+- The umask value was 0022.
+- These permissions help protect project data by reducing exposure to unauthorized users.

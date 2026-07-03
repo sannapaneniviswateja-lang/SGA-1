@@ -1,0 +1,49 @@
+I/O Investigation Report
+========================
+
+Commands executed and observed results:
+
+1. rm -f app.log stdout.txt stderr.txt combined.txt
+2. echo "sample log line" > app.log
+3. lsof | head -n 20
+Output:
+The command listed currently open files and descriptors for active processes.
+
+Explanation: This helped identify open files and file handles in the running environment.
+
+4. exec 3<app.log
+5. lsof -p $$
+Output:
+The shell process showed descriptor 3 open for app.log.
+
+Explanation: This demonstrated that a shell can open a file and assign it to a file descriptor.
+
+6. ls -l /proc/$$/fd | grep app.log
+Output:
+lr-x------ 1 codespace codespace 64 Jul  3 13:54 3 -> /workspaces/SGA-1/q4/app.log
+
+Explanation: This confirmed the file descriptor mapping in the process filesystem.
+
+7. ls -l > stdout.txt
+8. ls /not_a_real_path 2> stderr.txt
+9. (ls -l && ls /not_a_real_path) > combined.txt 2>&1
+Output:
+The stdout and stderr streams were redirected into files as expected.
+
+Explanation: This showed how standard output, standard error, and combined output can be captured separately.
+
+10. ulimit -a
+Output:
+open files (-n) 524288
+file size (-f) unlimited
+stack size (-s) 8192
+
+Explanation: This displayed resource limits relevant to file access and process behavior.
+
+11. exec 3<&-
+Explanation: This closed the custom file descriptor after the investigation.
+
+Summary:
+- Linux tracks open files through file descriptors.
+- Standard output and standard error can be redirected independently or combined.
+- Resource limits such as file descriptors and stack size influence process I/O behavior.
